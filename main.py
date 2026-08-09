@@ -1,19 +1,20 @@
 from api.auth import get_access_token
 from api.scores import get_recent_scores
-from config import CLIENT_ID, CLIENT_SECRET, FILE_PATH, LIMIT
-from storage.dataframe import append_new_rows, load_dataframe, save_dataframe
-from utils.converters import score_to_row
+from api.user import get_user
+from config import CLIENT_ID, CLIENT_SECRET, LIMIT, SCORES_FILE_PATH, USERS_FILE_PATH
+from services.scores import update_scores
+from services.users import update_user
 
 
-def main(user_id: str, mode: str):
+def main(username: str, mode: str):
     access_token = get_access_token(CLIENT_ID, CLIENT_SECRET)
-    scores = get_recent_scores(access_token, user_id, mode, LIMIT)
 
-    df = load_dataframe(FILE_PATH)
-    rows = [score_to_row(score) for score in scores]
-    df = append_new_rows(df, rows)
-    save_dataframe(df, FILE_PATH)
+    user = get_user(access_token, username, mode)
+    update_user(user, USERS_FILE_PATH)
+
+    scores = get_recent_scores(access_token, user["id"], mode, LIMIT)
+    update_scores(scores, SCORES_FILE_PATH)
 
 
 if __name__ == "__main__":
-    main(10655638, "osu")
+    main("nixusxD", "osu")

@@ -6,7 +6,32 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def load_dataframe(file_path: Path) -> pd.DataFrame:
+def load_users_dataframe(file_path: Path) -> pd.DataFrame:
+    try:
+        df = pd.read_csv(file_path)
+    except FileNotFoundError:
+        df = pd.DataFrame(
+            columns=[
+                "avatar_url",
+                "user_id",
+                "username",
+                "country_code",
+                "country_name",
+                "highest_rank",
+                "highest_rank_date",
+                "global_rank",
+                "country_rank",
+                "pp",
+                "accuracy",
+                "play_count",
+                "play_time",
+                "rank_history",
+            ],
+        )
+    return df
+
+
+def load_scores_dataframe(file_path: Path) -> pd.DataFrame:
     try:
         df = pd.read_csv(file_path)
     except FileNotFoundError:
@@ -27,7 +52,24 @@ def load_dataframe(file_path: Path) -> pd.DataFrame:
     return df
 
 
-def append_new_rows(df: pd.DataFrame, rows: list) -> pd.DataFrame:
+def upsert_user_row(df: pd.DataFrame, row: dict) -> pd.DataFrame:
+    user_id = row["user_id"]
+
+    if user_id in df["user_id"].to_numpy():
+        mask = df["user_id"] == user_id
+
+        for column, value in row.items():
+            df.loc[mask, column] = value
+    else:
+        df = pd.concat(
+            [df, pd.DataFrame([row])],
+            ignore_index=True,
+        )
+
+    return df
+
+
+def append_new_score_rows(df: pd.DataFrame, rows: list[dict]) -> pd.DataFrame:
     existing_ids = set(df["id"]) if not df.empty else set()
 
     new_rows = []

@@ -7,5 +7,6 @@ load_dotenv()
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-FILE_PATH = Path(os.getenv("FILE_PATH"))
+USERS_FILE_PATH = Path(os.getenv("USERS_FILE_PATH"))
+SCORES_FILE_PATH = Path(os.getenv("SCORES_FILE_PATH"))
 LIMIT = int(os.getenv("LIMIT"))
