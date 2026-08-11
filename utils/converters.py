@@ -1,16 +1,24 @@
 import json
 
+from utils.formatters import format_mods
+
 
 def score_to_row(score: dict) -> dict:
     return {
         "id": score["id"],
         "date": score["created_at"],
+        "mods": format_mods(score["mods"]),
         "artist": score["beatmapset"]["artist"],
         "title": score["beatmapset"]["title"],
         "version": score["beatmap"]["version"],
         "difficulty_rating": score["beatmap"]["difficulty_rating"],
         "total_length": score["beatmap"]["total_length"],
         "rank": score["rank"],
+        "score": score["score"],
+        "count_300": score["statistics"]["count_300"],
+        "count_100": score["statistics"]["count_100"],
+        "count_50": score["statistics"]["count_50"],
+        "count_miss": score["statistics"]["count_miss"],
         "accuracy": score["accuracy"],
         "pp": score["pp"],
     }
